@@ -1,20 +1,15 @@
 package ru.netology.web.test;
 
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 
-import ru.netology.web.data.DataHelper.CardData;
-import ru.netology.web.data.DataHelper;
-
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.appear;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static ru.netology.web.page.CardPaymentPage.*;
-
+import static ru.netology.web.data.DataHelper.CardData.*;
+import static ru.netology.web.page.CreditPurchasePage.*;
 
 public class BuyOnCreditTest {
 
@@ -22,123 +17,247 @@ public class BuyOnCreditTest {
     static void setUpAll() {
         SelenideLogger.addListener("allure", new AllureSelenide());
     }
+
     @AfterAll
     static void tearDownAll() {
         SelenideLogger.removeListener("allure");
     }
+
     @BeforeEach
     void setup() {
         open("http://localhost:8080");
     }
 
+
     @Test
-    @DisplayName("1. Payment by approved card. Entering valid values")
-    void shouldPaymentByApprovedCardWithValidValues() {
-        //open("http://localhost:8080");
-        //Configuration.holdBrowserOpen = true;
-        //Configuration.browserSize = "200x900";
-        var validCard = DataHelper.CardData.getCard();
+    @DisplayName("1. Credit by approved card. Entering valid values")
+    void shouldCreditByApprovedCardWithValidValues() {
+        var validCard = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(5, "MM"),
+                generateDate(24, "YY"));
         mainPage.shouldBe(visible);
         buttonPay.click();
-        cardPayment.shouldBe(visible);
-        cardNumberField.setValue(DataHelper.CardData.getApprovedNumbCard());
-        cardNumberField.setValue(validCard.getNumber());
-        monthField.setValue(validCard.getMonth());
-        monthField.setValue(DataHelper.CardData.generateDate(0, "MM"));
-        yearField.setValue(DataHelper.CardData.generateDate(5,"YY"));
-        holderField.setValue(DataHelper.CardData.generateName("en"));
-        cvcField.setValue(DataHelper.CardData.generateValidCVC());
-        buttonContinue.click();
+        fillingFieldsCreditPage(validCard);
         successfulMessage.should(appear, Duration.ofSeconds(15));
     }
 
     @Test
-    @DisplayName("2. Payment by approved card. Сhecking for the current month and the current year")
-    void shouldPaymentByApprovedCardWithCurrentMonthYear() {
-
+    @DisplayName("2. Credit by approved card. Checking for the current month and the current year")
+    void shouldCreditByApprovedCardWithCurrentMonthYear() {
+        var validCard = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(0, "MM"),
+                generateDate(0, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(validCard);
+        successfulMessage.should(appear, Duration.ofSeconds(15));
     }
 
     @Test
-    @DisplayName("3. Payment by decline card. Entering valid values")
-    void shouldPaymentByDeclineCardWithValidValues() {
-
+    @DisplayName("3. Credit by decline card. Entering valid values")
+    void shouldCreditByDeclineCardWithValidValues() {
+        var card = getCardWithParam(getDeclineNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(12, "MM"),
+                generateDate(15, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        declineMessage.should(appear, Duration.ofSeconds(15));
     }
 
     @Test
     @DisplayName("4. Checking for an empty card number field")
     void shouldCheckingForAnEmptyCardNumberField() {
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        cardPayment.shouldBe(visible);
 
+        monthField.setValue(generateDate(2, "MM"));
+        yearField.setValue(generateDate(18, "YY"));
+        holderField.setValue(generateName("en"));
+        cvcField.setValue(generateValidCVC());
+        buttonContinue.click();
+        messageAboutRequiredFieldUnderCardNumberField.should(appear);
     }
 
     @Test
     @DisplayName("5. Checking for an empty month field")
     void shouldCheckingForAnEmptyMonthField() {
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        cardPayment.shouldBe(visible);
+        cardNumberField.setValue(getDeclineNumbCard());
 
+        yearField.setValue(generateDate(26, "YY"));
+        holderField.setValue(generateName("en"));
+        cvcField.setValue(generateValidCVC());
+        buttonContinue.click();
+        messageAboutRequiredFieldUnderMonthField.should(appear);
     }
 
     @Test
     @DisplayName("6. Checking for an empty year field")
     void shouldCheckingForAnEmptyYearField() {
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        cardPayment.shouldBe(visible);
+        cardNumberField.setValue(getDeclineNumbCard());
+        monthField.setValue(generateDate(15, "MM"));
 
+        holderField.setValue(generateName("en"));
+        cvcField.setValue(generateValidCVC());
+        buttonContinue.click();
+        messageAboutRequiredFieldUnderYearField.should(appear);
     }
 
     @Test
     @DisplayName("7. Checking for an empty holder field")
     void shouldCheckingForAnEmptyHolderField() {
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        cardPayment.shouldBe(visible);
+        cardNumberField.setValue(getDeclineNumbCard());
+        monthField.setValue(generateDate(0, "MM"));
+        yearField.setValue(generateDate(0, "YY"));
 
+        cvcField.setValue(generateValidCVC());
+        buttonContinue.click();
+        messageAboutRequiredFieldUnderHolderField.should(appear);
     }
 
     @Test
     @DisplayName("8. Checking for an empty CVC/CVV field")
     void shouldCheckingForAnEmptyCVCField() {
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        cardPayment.shouldBe(visible);
+        cardNumberField.setValue(getDeclineNumbCard());
+        monthField.setValue(generateDate(0, "MM"));
+        yearField.setValue(generateDate(0, "YY"));
+        holderField.setValue(generateName("en"));
 
+        buttonContinue.click();
+        messageAboutRequiredFieldUnderCvcField.should(appear);
     }
 
     @Test
     @DisplayName("9. Checking for the previous month with approved card")
     void shouldCheckingForPreviousMonthWithApprovedCard() {
-
+        var card = getCardWithParam(getDeclineNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(-1, "MM"),
+                generateDate(0, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageAboutValidityPeriodUnderMonthField.should(appear);
     }
 
     @Test
     @DisplayName("10. Checking for the invalid month with approved card")
     void shouldCheckingForInvalidMonthWithApprovedCard() {
-
+        var card = getCardWithParam(getDeclineNumbCard(),
+                generateName("en"), generateValidCVC(),
+                getInvalidMonth(),
+                generateDate(0, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageAboutValidityPeriodUnderMonthField.should(appear);
     }
 
     @Test
     @DisplayName("11. Checking for the previous year with approved card")
     void shouldCheckingForPreviousYearWithApprovedCard() {
-
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(0, "MM"),
+                generateDate(-12, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageAboutValidityPeriodUnderYearField.should(appear);
     }
 
     @Test
     @DisplayName("12. Checking for field Year over 5 years")
     void shouldCheckingForFieldYearOverFiveYears() {
-
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                generateDate(0, "MM"),
+                generateDate(72, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageAboutInvalidityPeriodUnderYearField.should(appear);
     }
 
     @Test
     @DisplayName("13. Checking for 1 digit for the Month field")
     void shouldCheckingForOneDigitForTheMonthField() {
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                getMonthWithOneDigit(),
+                generateDate(3, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageUnderMonthField.should(appear);
 
     }
 
     @Test
     @DisplayName("14. Checking for Cyrillic in the Holder field")
     void shouldCheckingForCyrillicInHolderField() {
-
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("ru"), generateValidCVC(),
+                generateDate(5, "MM"),
+                generateDate(9, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageUnderHolderField.should(appear);
     }
 
     @Test
-    @DisplayName("15. Checking for 1 digit for the CVC field")
+    @DisplayName("15. Checking for special characters in the Holder field")
+    void shouldCheckingForSpecialCharactersInHolderField() {
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateNameWithSpecChar(), generateValidCVC(),
+                generateDate(6, "MM"),
+                generateDate(30, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageUnderHolderField.should(appear);
+    }
+
+    @Test
+    @DisplayName("16. Checking for 1 digit for the CVC field")
     void shouldCheckingForOneDigitForTheCVCField() {
-
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("ru"), generateInvalidCVC(),
+                generateDate(1, "MM"),
+                generateDate(27, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageUnderCvcField.should(appear);
     }
 
     @Test
-    @DisplayName("16. Checking for 15 digit for the card number field")
+    @DisplayName("17. Checking for 15 digit for the card number field")
     void shouldCheckingFor15DigitForTheCardNumberField() {
-
+        var card = getCardWithParam(getCardNumberWith15Symbols(),
+                generateName("ru"), generateValidCVC(),
+                generateDate(7, "MM"),
+                generateDate(9, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageUnderCardNumberField.should(appear);
     }
 }

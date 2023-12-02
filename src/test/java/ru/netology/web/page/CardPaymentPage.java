@@ -1,13 +1,14 @@
 package ru.netology.web.page;
 
 import com.codeborne.selenide.SelenideElement;
+import ru.netology.web.data.DataHelper;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 public class CardPaymentPage {
     public static final SelenideElement mainPage = $x("//h2[contains(text(), 'Путешествие дня')]");
-    public static final SelenideElement buttonPay = $(".button__text").shouldHave(exactText("Купить"));
+    public static final SelenideElement buttonPay = $x("//span[text()='Купить']//ancestor::button");
     public static final SelenideElement cardPayment = $x("//h3[contains(text(), 'Оплата по карте')]");
     public static final SelenideElement cardNumberField = $x(".//span[text()='Номер карты'] /..//input[contains(@class, " +
             "'input__control')]");
@@ -51,11 +52,13 @@ public class CardPaymentPage {
     public static final SelenideElement declineMessage = $x("//div[text() = 'Ошибка! Банк отказал в проведении операции.']");
 
 
-//    public void validCardPage(DataHelper.CardData card) {
-//        mainPage.shouldBe(visible);
-//        buttonPay.click();
-//        cardPayment.shouldBe(visible);
-//        cardNumberField.setValue(card.getNumber());
-//        cardNumberField.setValue(card.);
-
+    public static void fillingFieldsPaymentPage(DataHelper.CardData card) {
+        cardPayment.shouldBe(visible);
+        cardNumberField.setValue(card.getNumber());
+        monthField.setValue(card.getMonth());
+        yearField.setValue(card.getYear());
+        holderField.setValue(card.getHolder());
+        cvcField.setValue(card.getCvc());
+        buttonContinue.click();
+    }
 }

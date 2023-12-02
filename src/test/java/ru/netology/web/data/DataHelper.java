@@ -14,14 +14,13 @@ public class DataHelper {
     @Value
     public static class CardData {
         private final String number;
-        private final String month;
-        private final String year;
         private final String holder;
         private final String cvc;
+        private final String month;
+        private final String year;
 
-        public static CardData getCard() {
-            return new CardData(getApprovedNumbCard(), generateDate(10, "MM"), generateDate(5, "YY"), generateName(
-                    "en"), generateValidCVC());
+        public static CardData getCardWithParam(String number, String holder, String cvc, String month, String year) {
+            return new CardData(number, holder, cvc, month, year);
         }
 
         public static String getApprovedNumbCard() {
