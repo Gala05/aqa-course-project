@@ -260,4 +260,17 @@ public class BuyOnCreditTest {
         fillingFieldsCreditPage(card);
         messageUnderCardNumberField.should(appear);
     }
+
+    @Test
+    @DisplayName("18. Checking for the field Month 00 with approved card")
+    void shouldCheckingForMonth00() {
+        var card = getCardWithParam(getApprovedNumbCard(),
+                generateName("en"), generateValidCVC(),
+                getMonth00(),
+                generateDate(9, "YY"));
+        mainPage.shouldBe(visible);
+        buttonPay.click();
+        fillingFieldsCreditPage(card);
+        messageAboutValidityPeriodUnderMonthField.should(appear);
+    }
 }

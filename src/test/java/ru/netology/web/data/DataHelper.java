@@ -37,6 +37,9 @@ public class DataHelper {
         public static String getInvalidMonth() {
             return "13";
         }
+        public static String getMonth00() {
+            return "00";
+        }
 
         public static String getMonthWithOneDigit() {
             Faker faker = new Faker();
