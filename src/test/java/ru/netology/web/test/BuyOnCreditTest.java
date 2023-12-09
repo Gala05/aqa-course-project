@@ -3,6 +3,7 @@ package ru.netology.web.test;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
+import ru.netology.web.data.SQLHelper;
 
 import java.time.Duration;
 
@@ -21,6 +22,10 @@ public class BuyOnCreditTest {
     @AfterAll
     static void tearDownAll() {
         SelenideLogger.removeListener("allure");
+    }
+    @AfterAll
+    static void teardown() {
+        SQLHelper.cleanDataBase();
     }
 
     @BeforeEach

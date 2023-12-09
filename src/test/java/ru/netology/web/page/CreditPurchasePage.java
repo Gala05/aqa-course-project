@@ -1,9 +1,11 @@
 package ru.netology.web.page;
 
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.Keys;
 import ru.netology.web.data.DataHelper;
 
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 public class CreditPurchasePage {
@@ -47,6 +49,7 @@ public class CreditPurchasePage {
             "(@class, 'input__control')] /.. /..//span[text()='Неверный формат']");
     public static final SelenideElement messageAboutRequiredFieldUnderCvcField = $x("//span[text()='CVC/CVV'] /..//input[contains" +
             "(@class, 'input__control')] /.. /..//span[text()='Поле обязательно для заполнения']");
+    public static final SelenideElement closePopupWindow = $(".icon-button__text");
 
     public static final SelenideElement successfulMessage = $x("//div[text() = 'Успешно']");
     public static final SelenideElement declineMessage = $x("//div[text() = 'Ошибка! Банк отказал в проведении операции.']");
@@ -59,5 +62,14 @@ public class CreditPurchasePage {
         holderField.setValue(card.getHolder());
         cvcField.setValue(card.getCvc());
         buttonContinue.click();
+    }
+
+    public static void clearingFields() {
+        cardNumberField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
+        monthField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        yearField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        holderField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        cvcField.sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.BACK_SPACE);
+        closePopupWindow.click();
     }
 }

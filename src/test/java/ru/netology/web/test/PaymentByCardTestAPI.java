@@ -1,18 +1,40 @@
 package ru.netology.web.test;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
+import io.restassured.module.jsv.JsonSchemaValidator;
 import io.restassured.specification.RequestSpecification;
 
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.netology.web.data.SQLHelper;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static ru.netology.web.data.DataHelper.CardData.*;
 
 public class PaymentByCardTestAPI {
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
+
+    @AfterAll
+    static void teardown() {
+        SQLHelper.cleanDataBase();
+    }
 
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
             .setBaseUri("http://localhost")
