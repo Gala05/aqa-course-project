@@ -4,7 +4,6 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
-import ru.netology.web.data.SQLHelper;
 
 import java.time.Duration;
 
@@ -12,6 +11,7 @@ import static com.codeborne.selenide.Condition.appear;
 import static com.codeborne.selenide.Selenide.open;
 import static ru.netology.web.data.DataHelper.CardData.*;
 import static ru.netology.web.data.DataHelper.CardData.generateDate;
+import static ru.netology.web.data.SQLHelper.*;
 import static ru.netology.web.page.CardPaymentPage.*;
 
 
@@ -73,14 +73,14 @@ public class PaymentByCardTestSQL {
 
     @AfterAll
     static void teardown() {
-        SQLHelper.cleanDataBase();
+        cleanDataBase();
     }
 
     @SneakyThrows
     @Test
     void test() {
-        Assertions.assertEquals("5", SQLHelper.RowCount());
-        Assertions.assertEquals("2", SQLHelper.approvedRowCountPaymentCard());
-        Assertions.assertEquals("3", SQLHelper.declineRowCountPaymentCard());
+        Assertions.assertEquals("5", RowCount());
+        Assertions.assertEquals("2", approvedRowCountPaymentCard());
+        Assertions.assertEquals("3", declineRowCountPaymentCard());
     }
 }
