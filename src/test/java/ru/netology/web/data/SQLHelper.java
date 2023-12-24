@@ -7,15 +7,31 @@ import org.apache.commons.dbutils.handlers.ScalarHandler;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class SQLHelper {
     private static QueryRunner runner = new QueryRunner();
 
+    private static Properties properties =  null;
+    static {
+        try {
+            properties = new Properties();
+            properties.load(new FileInputStream("application.properties"));
+            String url = properties.getProperty("spring.datasource.url");
+            String user =  properties.getProperty("spring.datasource.username");
+            String password = properties.getProperty("spring.datasource.password");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private SQLHelper() {
     }
 
-    private static Connection getConn() throws SQLException {
-        return DriverManager.getConnection("jdbc:mysql://localhost:3306/tour", "tourist", "pass");
+    private static Connection getConn() throws SQLException, IOException {
+        return DriverManager.getConnection(properties.getProperty("spring.datasource.url"), properties.getProperty("spring.datasource.username"), properties.getProperty("spring.datasource.password"));
     }
 
     public static String RowCount() throws SQLException {
@@ -24,6 +40,8 @@ public class SQLHelper {
         try (var conn = getConn()) {
             count = runner.query(conn, code, new ScalarHandler<>());
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return String.valueOf(count);
@@ -36,6 +54,8 @@ public class SQLHelper {
             count = runner.query(conn, code, new ScalarHandler<>());
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return String.valueOf(count);
     }
@@ -46,6 +66,8 @@ public class SQLHelper {
         try (var conn = getConn()) {
             count = runner.query(conn, code, new ScalarHandler<>());
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return String.valueOf(count);
@@ -58,6 +80,8 @@ public class SQLHelper {
             count = runner.query(conn, code, new ScalarHandler<>());
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return String.valueOf(count);
     }
@@ -68,6 +92,8 @@ public class SQLHelper {
         try (var conn = getConn()) {
             count = runner.query(conn, code, new ScalarHandler<>());
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return String.valueOf(count);

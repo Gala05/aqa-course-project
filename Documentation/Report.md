@@ -11,7 +11,7 @@
 6. Автоматизированные тесты БД через SQL-запросы (1 тест с 3 проверками) BuyOnCreditTestSQL
    Итого 46 тестов
 
-![Alt text](https://monosnap.com/image/LT5BKIgbgRy3bzaJv0KSyrbkDaLwY5)
+![Alt text](https://monosnap.com/image/uTiNOJ2Es9OgoG74i9EdbXTzJOzrGl)
 ### Общие рекомендации  
 Предоставить доступ к документации проекта  
 Добавить в HTML код веб сервиса тестовые метки с id
